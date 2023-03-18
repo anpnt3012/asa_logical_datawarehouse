@@ -1,0 +1,17 @@
+{
+	"name": "2_payment",
+	"properties": {
+		"content": {
+			"query": "-- This is auto-generated code\nUSE nyc_taxi_discovery;\n\nSELECT TOP 100 CAST(JSON_VALUE(jsonContent,'$.payment_type') AS SMALLINT) payment_type,\n                CAST(JSON_VALUE(jsonContent,'$.payment_type_desc') AS VARCHAR(15)) payment_type_desc\nFROM\n    OPENROWSET(\n        BULK 'payment_type.json',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0a'\n    )\n    WITH (\n        jsonContent varchar(MAX)\n    ) AS payment_type;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discovery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

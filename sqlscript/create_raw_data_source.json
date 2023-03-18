@@ -1,0 +1,20 @@
+{
+	"name": "create_raw_data_source",
+	"properties": {
+		"folder": {
+			"name": "utils"
+		},
+		"content": {
+			"query": "CREATE EXTERNAL DATA SOURCE nyc_taxi_data_raw \nWITH (\n    LOCATION = 'abfss://nyc-taxi-data@dp203anpnt.dfs.core.windows.net/raw'\n)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discovery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "collation_databases",
+	"properties": {
+		"folder": {
+			"name": "utils"
+		},
+		"content": {
+			"query": "--collation utf8\nALTER DATABASE nyc_taxi_discovery COLLATE Latin1_General_100_CI_AI_SC_UTF8\n\nSELECT name, collation_name\nFROM sys.databases\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

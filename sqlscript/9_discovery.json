@@ -1,0 +1,20 @@
+{
+	"name": "9_discovery",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discovery"
+		},
+		"content": {
+			"query": "USE nyc_taxi_discovery;\n\n/* Identify the percentage of cash and credit card trips by borough \nExample Data As below\nborough\ttotal_trips cash_trips card_trips cash_trips_percentage\tcard_trips_percentage\nBronx\t2019\t751\t1268\t37.20 \nBrooklyn\t6435\t2192\t4243\t34.06\t62.80 65.94\n*/  \n\nWITH v_payment_type AS\n(\n    SELECT CAST(JSON_VALUE(jsonContent,'$.payment_type') AS SMALLINT) payment_type,\n            CAST(JSON_VALUE(jsonContent,'$.payment_type_desc') AS VARCHAR(15)) payment_type_desc\n    FROM\n    OPENROWSET(\n        BULK 'payment_type.json',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0a'\n    )\n    WITH (\n        jsonContent varchar(MAX)\n    ) AS payment_type\n),\nv_taxi_zone AS\n(\n    SELECT\n    *\n    FROM\n    OPENROWSET(\n        BULK 'taxi_zone.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        FIRST_ROW = 2\n    )\n    WITH(\n    location_id SMALLINT 1, \n    borough VARCHAR(15) 2, \n    zone VARCHAR(50) 3, \n    service_zone VARCHAR(15) 4\n    )  AS taxi_zone\n),\nv_trip_data AS\n(\n    SELECT\n    *\n    FROM\n    OPENROWSET(\n        BULK 'trip_data_green_parquet/year=2020/month=01/',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'PARQUET'\n    ) AS trip_data\n)\n\nSELECT\n    ta.borough,\n    COUNT(*) AS total_trips,\n    SUM(CASE WHEN p.payment_type_desc='Cash' THEN 1 ELSE 0 END) AS cash_trips,\n    SUM(CASE WHEN p.payment_type_desc='Credit card' THEN 1 ELSE 0 END) AS card_trips,\n    CAST((SUM(CASE WHEN p.payment_type_desc='Cash' THEN 1 ELSE 0 END) / CAST(COUNT(*) AS DECIMAL)) * 100 AS DECIMAL(5,2)) AS cash_trips_percent,\n    CAST((SUM(CASE WHEN p.payment_type_desc='Credit card' THEN 1 ELSE 0 END) / CAST(COUNT(*) AS DECIMAL)) * 100 AS DECIMAL(5,2)) AS card_trips_percent\n\nFROM v_trip_data AS t\nLEFT JOIN v_payment_type AS p ON t.payment_type = p.payment_type\nLEFT JOIN v_taxi_zone AS ta ON t.PULocationID = ta.location_id\nWHERE p.payment_type_desc IN ('Cash','Credit card')\nGROUP BY ta.borough;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discovery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

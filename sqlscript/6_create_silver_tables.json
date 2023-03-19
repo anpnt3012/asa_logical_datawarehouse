@@ -1,0 +1,20 @@
+{
+	"name": "6_create_silver_tables",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw;\n\n--create external silver taxi_zone\nIF OBJECT_ID('silver.taxi_zone') IS NOT NULL\n    DROP EXTERNAL TABLE silver.taxi_zone;\n\nCREATE EXTERNAL TABLE silver.taxi_zone\n    WITH (  \n        DATA_SOURCE = nyc_taxi_src,\n        LOCATION = 'silver/taxi_zone',  \n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\nFROM bronze.taxi_zone;\n--Total size of data scanned is 1 megabytes, total size of data moved is 0 megabytes, \n--total size of data written is 1 megabytes.",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

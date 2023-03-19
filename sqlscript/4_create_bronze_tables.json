@@ -1,5 +1,5 @@
 {
-	"name": "4_create_external_table",
+	"name": "4_create_bronze_tables",
 	"properties": {
 		"folder": {
 			"name": "nyc_taxi/ldw"

@@ -1,11 +1,11 @@
 {
-	"name": "SQL script 1",
+	"name": "2_create_external_data_source",
 	"properties": {
 		"folder": {
 			"name": "nyc_taxi/ldw"
 		},
 		"content": {
-			"query": "USE nyc_taxi_ldw;\n\n",
+			"query": "USE nyc_taxi_ldw;\n\nCREATE EXTERNAL DATA SOURCE nyc_taxi_src\nWITH\n(    LOCATION = 'https://dp203anpnt.dfs.core.windows.net/nyc-taxi-data'\n);",
 			"metadata": {
 				"language": "sql"
 			},

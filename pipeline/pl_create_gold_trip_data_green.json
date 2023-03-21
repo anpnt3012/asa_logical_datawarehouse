@@ -66,7 +66,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"p_folder_path": {
-											"value": "silver/trip_data_green/year=@{item().year}/month=@{item().month}",
+											"value": "gold/trip_data_green/year=@{item().year}/month=@{item().month}",
 											"type": "Expression"
 										}
 									}
@@ -99,7 +99,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[silver].[usp_silver_trip_data_green]",
+								"storedProcedureName": "[gold].[usp_gold_trip_data_green]",
 								"storedProcedureParameters": {
 									"month": {
 										"value": {
@@ -126,7 +126,7 @@
 				}
 			},
 			{
-				"name": "Create silver view",
+				"name": "Create gold view",
 				"type": "Script",
 				"dependsOn": [
 					{
@@ -156,11 +156,11 @@
 						},
 						{
 							"type": "NonQuery",
-							"text": "DROP VIEW IF EXISTS silver.vw_trip_data_green;"
+							"text": "DROP VIEW IF EXISTS gold.vw_trip_data_green;"
 						},
 						{
 							"type": "NonQuery",
-							"text": "CREATE VIEW silver.vw_trip_data_green\nAS\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.*\nFROM\n    OPENROWSET(\n        BULK 'silver/trip_data_green/year=*/month=*/**',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'parquet'\n    )\n    WITH(\n        VendorID INT, \n        lpep_pickup_datetime DATETIME2(7), \n        lpep_dropoff_datetime DATETIME2(7), \n        store_and_fwd_flag CHAR(1), \n        RatecodeID INT, \n        PULocationID INT, \n        DOLocationID INT, \n        passenger_count INT, \n        trip_distance FLOAT, \n        fare_amount FLOAT, \n        extra FLOAT, \n        mta_tax FLOAT, \n        tip_amount FLOAT, \n        tolls_amount FLOAT, \n        ehail_fee INT, \n        improvement_surcharge FLOAT, \n        total_amount FLOAT, \n        payment_type INT, \n        trip_type INT, \n        congestion_surcharge FLOAT\n    ) AS [result];"
+							"text": "CREATE VIEW gold.vw_trip_data_green\nAS\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.*\nFROM\n    OPENROWSET(\n        BULK 'gold/trip_data_green/year=*/month=*/**',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'parquet'\n    )\n    WITH(\n        borough\tVARCHAR(15),\n        trip_date\tDATE,\n        trip_day\tVARCHAR(10),\n        trip_weekend_indicate CHAR(1), \n        card_trip_count INT,\n        cash_trip_count INT,\n        street_hail_trip_count\tINT,\n        dispatch_trip_count\tINT,\n        trip_distance\tFLOAT,\n        trip_duration\tINT,\n        fare_amount\tFLOAT\n    ) AS [result];"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"

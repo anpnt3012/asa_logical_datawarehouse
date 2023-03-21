@@ -1,0 +1,15 @@
+{
+	"name": "ls_sourcedata",
+	"properties": {
+		"description": "raw data",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://dp203anpnt.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

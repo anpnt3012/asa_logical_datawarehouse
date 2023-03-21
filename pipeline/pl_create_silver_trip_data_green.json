@@ -22,7 +22,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "SELECT DISTINCT year,month\n FROM silver.vw_trip_data_green;"
+							"text": "USE nyc_taxi_ldw;\nSELECT DISTINCT year,month\n FROM silver.vw_trip_data_green;"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"

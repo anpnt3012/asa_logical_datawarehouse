@@ -14,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "Delete silver taxi zone folder",
+							"name": "Delete silver folders",
 							"type": "Delete",
 							"dependsOn": [],
 							"policy": {
@@ -45,11 +45,11 @@
 							}
 						},
 						{
-							"name": "Create silver taxi zone",
+							"name": "Create silver tables",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Delete silver taxi zone folder",
+									"activity": "Delete silver folders",
 									"dependencyConditions": [
 										"Succeeded"
 									]

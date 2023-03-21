@@ -5,7 +5,7 @@
 			"name": "nyc_taxi/ldw"
 		},
 		"content": {
-			"query": "USE nyc_taxi_ldw\nGO\n\n--create view gold trip_data_green\nDROP VIEW IF EXISTS gold.vw_trip_data_green\nGO\n\nCREATE VIEW gold.vw_trip_data_green\nAS\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.*\nFROM\n    OPENROWSET(\n        BULK 'gold/trip_data_green_parquet/year=*/month=*/**',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'parquet'\n    )\n    WITH(\n        borough\tVARCHAR(15),\n        trip_date\tDATE,\n        trip_day\tVARCHAR(10),\n        trip_day_weekend_ind CHAR(1), \n        card_trip_count INT,\n        cash_trip_count INT\n    ) AS [result]\nGO",
+			"query": "USE nyc_taxi_ldw\nGO\n\n--create view gold trip_data_green\nDROP VIEW IF EXISTS gold.vw_trip_data_green\nGO\n\nCREATE VIEW gold.vw_trip_data_green\nAS\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.*\nFROM\n    OPENROWSET(\n        BULK 'gold/trip_data_green/year=*/month=*/**',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'parquet'\n    )\n    WITH(\n        borough\tVARCHAR(15),\n        trip_date\tDATE,\n        trip_day\tVARCHAR(10),\n        trip_weekend_indicate CHAR(1), \n        card_trip_count INT,\n        cash_trip_count INT,\n        street_hail_trip_count\tINT,\n        dispatch_trip_count\tINT,\n        trip_distance\tFLOAT\n        trip_duration\tINT,\n        fare_amount\tFLOAT\n    ) AS [result]\nGO",
 			"metadata": {
 				"language": "sql"
 			},

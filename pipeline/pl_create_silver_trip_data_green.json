@@ -80,7 +80,7 @@
 							}
 						},
 						{
-							"name": "Stored procedure1",
+							"name": "Create partition",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{

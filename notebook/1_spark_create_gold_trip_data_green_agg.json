@@ -3,6 +3,10 @@
 	"properties": {
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "dp203spark",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
@@ -13,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f814d0f0-77a3-4f0f-a0d4-d97663915516"
+				"spark.autotune.trackingId": "642054f0-12a6-4425-988d-48d2cfecadec"
 			}
 		},
 		"metadata": {
@@ -25,6 +29,21 @@
 			},
 			"language_info": {
 				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/dfb99ee2-c1e7-4170-9240-c7773c9e7c6f/resourceGroups/an-dp203-lab/providers/Microsoft.Synapse/workspaces/dp203anpnt/bigDataPools/dp203spark",
+				"name": "dp203spark",
+				"type": "Spark",
+				"endpoint": "https://dp203anpnt.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203spark",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -73,9 +92,9 @@
 				},
 				"source": [
 					"#Set the folder paths so that it can be used later. \n",
-					"bronze_folder_path = 'abfss://nyc-taxi-data@synapsecoursedl.dfs.core.windows.net/raw'\n",
-					"silver_folder_path = 'abfss://nyc-taxi-data@synapsecoursedl.dfs.core.windows.net/silver'\n",
-					"gold_folder_path = 'abfss://nyc-taxi-data@synapsecoursedl.dfs.core.windows.net/gold'"
+					"bronze_folder_path = 'abfss://nyc-taxi-data@dp203anpnt.dfs.core.windows.net/raw/'\n",
+					"silver_folder_path = 'abfss://nyc-taxi-data@dp203anpnt.dfs.core.windows.net/silver'\n",
+					"gold_folder_path = 'abfss://nyc-taxi-data@dp203anpnt.dfs.core.windows.net/gold'"
 				],
 				"execution_count": 1
 			},
@@ -121,7 +140,7 @@
 					"-- Create database to which we are going to write the data\n",
 					"\n",
 					"CREATE DATABASE IF NOT EXISTS nyc_taxi_ldw_spark\n",
-					"LOCATION 'abfss://nyc-taxi-data@synapsecoursedl.dfs.core.windows.net/gold';"
+					"LOCATION 'abfss://nyc-taxi-data@dp203anpnt.dfs.core.windows.net/gold';"
 				],
 				"execution_count": 3
 			},
@@ -142,7 +161,7 @@
 					"# Read the silver data to be processed. \n",
 					"trip_data_green_df = spark.read.parquet(f\"{silver_folder_path}/trip_data_green\") "
 				],
-				"execution_count": 4
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -164,11 +183,11 @@
 					"from pyspark.sql.functions import *\n",
 					"\n",
 					"trip_data_green_agg_df = trip_data_green_df \\\n",
-					"                        .groupBy(\"year\", \"month\", \"pu_location_id\", \"do_location_id\") \\\n",
+					"                        .groupBy(\"year\", \"month\", \"PULocationID\", \"DOLocationID\") \\\n",
 					"                        .agg(count(lit(1)).alias(\"total_trip_count\"),\n",
 					"                        round(sum(\"fare_amount\"), 2).alias(\"total_fare_amount\"))"
 				],
-				"execution_count": 5
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -188,7 +207,7 @@
 					"\n",
 					"trip_data_green_agg_df.write.mode(\"overwrite\").partitionBy(\"year\", \"month\").format(\"parquet\").saveAsTable(\"nyc_taxi_ldw_spark.trip_data_green_agg\")"
 				],
-				"execution_count": 6
+				"execution_count": 11
 			}
 		]
 	}
